@@ -1,13 +1,12 @@
 image: alpine/edge
 packages:
     - git
-sources:
-    - https://git.sr.ht/~lh2/adventofcode18
 secrets:
     - 47b4ed2e-4913-403d-8e8a-85d29f3445e3
     - 354a00e4-31cc-4ea5-9883-e40c18531d5e
 tasks:
     - mirror: |
+        git clone https://git.sr.ht/~lh2/adventofcode18
         cd ~/adventofcode18
         git remote set-url origin git@github.com:lh2/adventofcode2018.git
         git push
