@@ -13,7 +13,7 @@ if [ $2 -lt 1 ] || [ $2 -gt 2 ]; then
 	exit 1
 fi
 if [ ! -e input/$1.txt ]; then
-	./getinput $1
+	./getinput.sh $1
 fi
 
 cat <<EOF > d$1/gen.go
