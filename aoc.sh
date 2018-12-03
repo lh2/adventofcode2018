@@ -25,6 +25,14 @@ import (
 	"os"
 )
 
+func inAsSlice(in chan string) []string {
+	list := make([]string, 0)
+	for line := range in {
+		list = append(list, line)
+	}
+	return list
+}
+
 func main() {
 	ch := make(chan string)
 	go func() {

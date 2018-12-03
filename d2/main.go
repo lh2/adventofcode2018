@@ -35,3 +35,37 @@ func task1(in chan string) string {
 	}
 	return strconv.Itoa(two * three)
 }
+
+func diffIDs(id1, id2 string) (int, string) {
+	diff := 0
+	sameChars := make([]rune, 0)
+	for i, c1 := range id1 {
+		c2 := []rune(id2)[i]
+		if c1 != c2 {
+			diff++
+		} else {
+			sameChars = append(sameChars, c1)
+		}
+	}
+	return diff, string(sameChars)
+}
+
+func task2(in chan string) string {
+	list := inAsSlice(in)
+	lowestDiff := int(^uint(0) >> 1)
+	var sameChars string
+	for k1, l1 := range list {
+		for k2, l2 := range list {
+			if k1 == k2 {
+				break
+			}
+			var diff int
+			diff, chars := diffIDs(l1, l2)
+			if diff < lowestDiff {
+				lowestDiff = diff
+				sameChars = chars
+			}
+		}
+	}
+	return sameChars
+}
