@@ -10,8 +10,8 @@ secrets:
     - 354a00e4-31cc-4ea5-9883-e40c18531d5e
 tasks:
     - mirror: |
-    	# The repo is cloned here manually, because sr.ht points repos
-    	# defined in "sources" to the pushed ref which would break this.
+        # The repo is cloned here manually, because sr.ht points repos
+        # defined in "sources" to the pushed ref which would break this.
         git clone https://git.sr.ht/~lh2/adventofcode18
         cd adventofcode18
         git remote set-url origin git@github.com:lh2/adventofcode2018.git
