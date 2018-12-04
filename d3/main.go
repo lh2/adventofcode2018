@@ -9,14 +9,6 @@ const CLOTH_SIZE = 1000
 
 var cutRegexp = regexp.MustCompile(`#(\d+) @ (\d+),(\d+): (\d+)x(\d+)`)
 
-func mustAtoi(v string) int {
-	i, err := strconv.Atoi(v)
-	if err != nil {
-		panic(err)
-	}
-	return i
-}
-
 func parseCut(line string) (id, x, y, w, h int) {
 	grps := cutRegexp.FindStringSubmatch(line)
 	id = mustAtoi(grps[1])

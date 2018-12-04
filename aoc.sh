@@ -22,6 +22,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"strconv"
 )
 
 func inAsSlice(in chan string) []string {
@@ -30,6 +31,14 @@ func inAsSlice(in chan string) []string {
 		list = append(list, line)
 	}
 	return list
+}
+
+func mustAtoi(v string) int {
+	i, err := strconv.Atoi(v)
+	if err != nil {
+		panic(err)
+	}
+	return i
 }
 
 func main() {
