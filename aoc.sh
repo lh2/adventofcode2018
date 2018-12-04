@@ -1,5 +1,4 @@
 #!/bin/sh
-
 if [ "x$1" = "x" ] || [ "x$2" = "x" ]; then
 	echo 1>&2 USAGE: aoc.sh DAY TASK
 	exit 1
@@ -48,4 +47,4 @@ EOF
 
 go build -o bin ./d$1 && ./bin < input/$1.txt
 rm bin 2> /dev/null
-rm d$1/gen.go 2>/dev/null
+rm d$1/gen.go 2> /dev/null
