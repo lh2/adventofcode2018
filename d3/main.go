@@ -3,10 +3,10 @@ package main
 import (
 	"regexp"
 	"strconv"
-	"fmt"
 )
 
 const CLOTH_SIZE = 1000
+
 var cutRegexp = regexp.MustCompile(`#(\d+) @ (\d+),(\d+): (\d+)x(\d+)`)
 
 func mustAtoi(v string) int {
@@ -34,8 +34,8 @@ func computeClothOverlap(list []string) [][]int {
 	}
 	for _, line := range list {
 		_, x, y, w, h := parseCut(line)
-		for xp := x; xp < x + w; xp++ {
-			for yp := y; yp < y + h; yp++ {
+		for xp := x; xp < x+w; xp++ {
+			for yp := y; yp < y+h; yp++ {
 				cloth[xp][yp]++
 			}
 		}
@@ -63,8 +63,8 @@ func task2(in chan string) string {
 	for _, line := range list {
 		id, x, y, w, h := parseCut(line)
 		hasOverlap := false
-		for xp := x; !hasOverlap && xp < x + w; xp++ {
-			for yp := y; !hasOverlap && yp < y + h; yp++ {
+		for xp := x; !hasOverlap && xp < x+w; xp++ {
+			for yp := y; !hasOverlap && yp < y+h; yp++ {
 				hasOverlap = cloth[xp][yp] > 1
 			}
 		}

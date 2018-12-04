@@ -18,7 +18,6 @@ func atoiChan(in chan string) chan int {
 	}()
 	return out
 }
-		
 
 func task1(in chan string) string {
 	freq := 0
@@ -33,7 +32,7 @@ func task2(in chan string) string {
 	for i := range atoiChan(in) {
 		list = append(list, i)
 	}
-	
+
 	freqs := make(map[int]bool)
 	freq := 0
 	ok := false
