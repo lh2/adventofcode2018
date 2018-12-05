@@ -27,23 +27,25 @@ func reactPolymer(polymer string) string {
 			runes[i] = 0
 			runes[nextID] = 0
 			ni := i
-			for ; ni >= 0 && runes[ni] == 0; ni-- {}
+			for ; ni >= 0 && runes[ni] == 0; ni-- {
+			}
 			if ni < 0 {
 				ni = i
-				for ; runes[ni] == 0; ni++ {}
+				for ; runes[ni] == 0; ni++ {
+				}
 			}
 			i = ni - 1
 		}
 
 	}
-	
+
 	result := make([]rune, 0, len(runes))
 	for _, r := range runes {
 		if r > 0 {
 			result = append(result, r)
 		}
 	}
-	
+
 	return string(result)
 }
 
