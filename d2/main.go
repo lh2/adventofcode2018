@@ -55,10 +55,7 @@ func task2(in chan string) string {
 	lowestDiff := int(^uint(0) >> 1)
 	var sameChars string
 	for k1, l1 := range list {
-		for k2, l2 := range list {
-			if k1 == k2 {
-				break
-			}
+		for _, l2 := range list[k1:] {
 			var diff int
 			diff, chars := diffIDs(l1, l2)
 			if diff < lowestDiff {
