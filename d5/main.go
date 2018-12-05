@@ -6,38 +6,49 @@ import (
 	"unicode"
 )
 
-func reactPolymer(polymer string) (result string, reactions int) {
+func reactPolymer(polymer string) string {
 	runes := []rune(polymer)
+
 	reaction := false
 	for i := 0; i < len(runes)-1; i++ {
 		a := runes[i]
-		b := runes[i+1]
+		if a == 0 {
+			continue
+		}
+		nextID := i
+		var b rune
+		for b == 0 {
+			nextID++
+			b = runes[nextID]
+		}
 		reaction = a != b &&
 			unicode.ToLower(a) == unicode.ToLower(b)
 		if reaction {
-			reactions++
-			i++
-		} else {
-			result += string(runes[i])
+			runes[i] = 0
+			runes[nextID] = 0
+			ni := i
+			for ; ni >= 0 && runes[ni] == 0; ni-- {}
+			if ni < 0 {
+				ni = i
+				for ; runes[ni] == 0; ni++ {}
+			}
+			i = ni - 1
 		}
 
 	}
-	if !reaction {
-		result += string(runes[len(runes)-1])
+	
+	result := make([]rune, 0, len(runes))
+	for _, r := range runes {
+		if r > 0 {
+			result = append(result, r)
+		}
 	}
-	return
-}
-
-func fullyReactPolymer(polymer string) string {
-	reactions := 1
-	for reactions > 0 {
-		polymer, reactions = reactPolymer(polymer)
-	}
-	return polymer
+	
+	return string(result)
 }
 
 func task1(in chan string) string {
-	polymer := fullyReactPolymer(<-in)
+	polymer := reactPolymer(<-in)
 	return strconv.Itoa(len(polymer))
 }
 
@@ -50,7 +61,7 @@ func task2(in chan string) string {
 			string(unicode.ToUpper(unit)), "")
 		p := r.Replace(polymer)
 
-		p = fullyReactPolymer(p)
+		p = reactPolymer(p)
 		pl := len(p)
 		if pl < shortest {
 			shortest = pl
