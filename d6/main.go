@@ -2,13 +2,15 @@ package main
 
 import (
 	"math"
-	"strings"
 	"strconv"
+	"strings"
 )
 
+const TASK2_THRESHOLD = 10000
+
 type Point struct {
-	X int
-	Y int
+	X             int
+	Y             int
 	ClosestToEdge bool
 }
 
@@ -32,18 +34,8 @@ func parseLine(line string) *Point {
 	return NewPoint(x, y)
 }
 
-func distance(a, b *Point) int {
-	ax := float64(a.X)
-	bx := float64(b.X)
-	ay := float64(a.Y)
-	by := float64(b.Y)
-	return int(math.Abs(ax - bx) + math.Abs(ay - by))
-}
-
-func task1(in chan string) string {
-	ps := make(map[*Point]int)
-	w := 0
-	h := 0
+func parseInput(in chan string) (ps map[*Point]int, w, h int) {
+	ps = make(map[*Point]int)
 	for line := range in {
 		p := parseLine(line)
 		ps[p] = 0
@@ -56,6 +48,19 @@ func task1(in chan string) string {
 	}
 	w++
 	h++
+	return
+}
+
+func distance(a, b *Point) int {
+	ax := float64(a.X)
+	bx := float64(b.X)
+	ay := float64(a.Y)
+	by := float64(b.Y)
+	return int(math.Abs(ax-bx) + math.Abs(ay-by))
+}
+
+func task1(in chan string) string {
+	ps, w, h := parseInput(in)
 
 	for x := 0; x < w; x++ {
 		for y := 0; y < h; y++ {
@@ -84,7 +89,7 @@ func task1(in chan string) string {
 			}
 		}
 	}
-	
+
 	maxA := 0
 	for p, a := range ps {
 		if p.ClosestToEdge {
@@ -94,7 +99,23 @@ func task1(in chan string) string {
 			maxA = a
 		}
 	}
-	
+
 	return strconv.Itoa(maxA)
 }
-	
+
+func task2(in chan string) string {
+	ps, w, h := parseInput(in)
+	count := 0
+	for x := 0; x < w; x++ {
+		for y := 0; y < h; y++ {
+			totalD := 0
+			for p, _ := range ps {
+				totalD += distance(NewPoint(x, y), p)
+			}
+			if totalD < TASK2_THRESHOLD {
+				count++
+			}
+		}
+	}
+	return strconv.Itoa(count)
+}
