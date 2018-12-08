@@ -10,15 +10,31 @@ type Node struct {
 	Metadata []int
 }
 
-func (n *Node) SumMetadata() int {
-	sum := 0
+func (n *Node) SumMetadata() (sum int) {
 	for _, v := range n.Metadata {
 		sum += v
 	}
 	for _, v := range n.Subs {
 		sum += v.SumMetadata()
 	}
-	return sum
+	return
+}
+
+func (n *Node) Value() (value int) {
+	if len(n.Subs) == 0 {
+		for _, v := range n.Metadata {
+			value += v
+		}
+		return
+	}
+	for _, v := range n.Metadata {
+		i := v-1
+		if i < 0 || i >= len(n.Subs) {
+			continue
+		}
+		value += n.Subs[i].Value()
+	}
+	return
 }
 
 func parseData(data []int) (*Node, []int) {
@@ -50,4 +66,10 @@ func task1(in chan string) string {
 	license := <-in
 	tree := parseLicense(license)
 	return strconv.Itoa(tree.SumMetadata())
+}
+
+func task2(in chan string) string {
+	license := <-in
+	tree := parseLicense(license)
+	return strconv.Itoa(tree.Value())
 }
