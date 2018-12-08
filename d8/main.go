@@ -28,7 +28,7 @@ func (n *Node) Value() (value int) {
 		return
 	}
 	for _, v := range n.Metadata {
-		i := v-1
+		i := v - 1
 		if i < 0 || i >= len(n.Subs) {
 			continue
 		}
