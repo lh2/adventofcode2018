@@ -37,10 +37,14 @@ func (p *Player) Score() (score int) {
 	return
 }
 
-func setupGame(def string) (bag []*Marble, players []*Player) {
+func parseGameDef(def string) (pc int, mm int) {
 	defp := strings.Split(def, " ")
-	pc := mustAtoi(defp[0])
-	mm := mustAtoi(defp[6])
+	pc = mustAtoi(defp[0])
+	mm = mustAtoi(defp[6])
+	return
+}
+
+func setupGame(pc int, mm int) (bag []*Marble, players []*Player) {
 	players = make([]*Player, pc)
 	for i := 0; i < pc; i++ {
 		players[i] = &Player{
@@ -57,8 +61,7 @@ func setupGame(def string) (bag []*Marble, players []*Player) {
 	return
 }
 
-func task1(in chan string) string {
-	b, ps := setupGame(<-in)
+func playGame(b []*Marble, ps []*Player) {
 	cm := b[0]
 	cm.Next = cm
 	cm.Prev = cm
@@ -76,12 +79,29 @@ func task1(in chan string) string {
 		rm.Remove()
 		cp.Marbles = append(cp.Marbles, rm)
 	}
-	hs := 0
+}
+
+func highestScore(ps []*Player) (hs int) {
 	for _, p := range ps {
 		s := p.Score()
 		if s > hs {
 			hs = s
 		}
 	}
-	return strconv.Itoa(hs)
+	return hs
+}
+
+func task1(in chan string) string {
+	pc, mm := parseGameDef(<-in)
+	b, ps := setupGame(pc, mm)
+	playGame(b, ps)
+	return strconv.Itoa(highestScore(ps))
+}
+
+func task2(in chan string) string {
+	pc, mm := parseGameDef(<-in)
+	mm *= 100
+	b, ps := setupGame(pc, mm)
+	playGame(b, ps)
+	return strconv.Itoa(highestScore(ps))
 }
