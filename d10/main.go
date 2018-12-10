@@ -3,6 +3,7 @@ package main
 import (
 	"math"
 	"regexp"
+	"strconv"
 )
 
 var lineRegex = regexp.MustCompile(`position=\<\s*([\d-]+),\s*([\d-]+)\> velocity=\<\s*([\d-]+),\s*([\d-]+)\>`)
@@ -85,17 +86,31 @@ func draw(ps []*Point, xs, ys, w, h int64) (s string) {
 	return
 }
 
-func task1(in chan string) string {
-	ps := pointsFromInput(in)
+func searchMessage(ps []*Point) (msg string, i int) {
 	la := int64(math.MaxInt64)
 	var ops []*Point
+	i = -1
 	for {
 		a, x, y, w, h := computeArea(ps)
 		if a > la {
-			return draw(ops, x, y, w, h)
+			msg = draw(ops, x, y, w, h)
+			return
 		}
 		la = a
 		ops = ps
 		ps = computeTick(ps)
+		i++
 	}
+}
+
+func task1(in chan string) string {
+	ps := pointsFromInput(in)
+	msg, _ := searchMessage(ps)
+	return msg
+}
+
+func task2(in chan string) string {
+	ps := pointsFromInput(in)
+	_, i := searchMessage(ps)
+	return strconv.Itoa(i)
 }
