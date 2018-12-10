@@ -41,6 +41,14 @@ func mustAtoi(v string) int {
 	return i
 }
 
+func mustAtoi64(v string) int64 {
+	i, err := strconv.ParseInt(v, 10, 64)
+	if err != nil {
+		panic(err)
+	}
+	return i
+}
+
 func main() {
 	ch := make(chan string)
 	go func() {
@@ -54,6 +62,7 @@ func main() {
 }
 EOF
 
+#gdlv run entf.net/adventofcode2018/d$1
 go build -o bin ./d$1 && ./bin < input/$1.txt
 rm bin 2> /dev/null
 rm d$1/gen.go 2> /dev/null
