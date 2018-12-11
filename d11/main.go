@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"sync"
+)
 
 const GRID_SIZE = 300
 
@@ -51,17 +54,36 @@ func task2(in chan string) string {
 	serial := mustAtoi(<-in)
 	grid := buildGrid(serial)
 
+	ch := make(chan [4]int)
+	var wg sync.WaitGroup
+	for size := 1; size < GRID_SIZE; size++ {
+		go func(s int) {
+			wg.Add(1)
+			power, x, y := findMaxPower(grid, s)
+			ch <- [4]int{
+				power,
+				x,
+				y,
+				s,
+			}
+			wg.Done()
+		}(size)
+	}
+
+	go func() {
+		wg.Wait()
+		close(ch)
+	}()
 	max := 0
 	var maxx int
 	var maxy int
 	var maxs int
-	for size := 1; size < GRID_SIZE; size++ {
-		power, x, y := findMaxPower(grid, size)
-		if power > max {
-			max = power
-			maxx = x
-			maxy = y
-			maxs = size
+	for r := range ch {
+		if r[0] > max {
+			max = r[0]
+			maxx = r[1]
+			maxy = r[2]
+			maxs = r[3]
 		}
 	}
 	return fmt.Sprintf("%d,%d,%d\n", maxx+1, maxy+1, maxs)
