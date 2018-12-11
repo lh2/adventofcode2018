@@ -13,4 +13,15 @@ if [ ! -d input ]; then
 	mkdir input
 fi
 
-curl -b "session=`cat session.txt`" https://adventofcode.com/2018/day/$day/input > input/$day.txt
+whydoihavetodothis() {
+	case "$day" in
+	11)
+		sed 's/.*puzzle-input"\>\s*(\d+)\s*/\1/'
+		;;
+	*)
+		cat
+		;;
+	esac
+}
+
+curl -b "session=`cat session.txt`" https://adventofcode.com/2018/day/$day/input | whydoihavetodothis > input/$day.txt
