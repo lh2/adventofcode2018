@@ -4,6 +4,8 @@ import (
 	"strconv"
 )
 
+const PATTERN_FINDER_THRESHOLD = 10
+
 func parseInput(in chan string) ([]int, map[int]int) {
 	pots := make([]int, 0)
 	ruleset := make(map[int]int)
@@ -70,10 +72,35 @@ func applyRules(rules map[int]int, in chan int) []int {
 	return pots
 }
 
-func run(rounds int, pots []int, rules map[int]int) (sum int) {
-	for i := 0; i < rounds; i++ {
-		pots = applyRules(rules, hashedPots(pots))
+func extractPattern(pots []int) []int {
+	var s int
+	for ; s < len(pots); s++ {
+		if pots[s] > 0 {
+			break
+		}
 	}
+	e := len(pots) - 1
+	for ; e > 0; e-- {
+		if pots[e] > 0 {
+			break
+		}
+	}
+	return pots[s : e+1]
+}
+
+func comparePattern(a, b []int) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	for i := 0; i < len(a); i++ {
+		if a[i] != b[i] {
+			return false
+		}
+	}
+	return true
+}
+
+func sum(rounds int, pots []int) (sum int) {
 	for i, pot := range pots {
 		i -= rounds * 2
 		if pot == 1 {
@@ -83,8 +110,43 @@ func run(rounds int, pots []int, rules map[int]int) (sum int) {
 	return
 }
 
+func run(rounds int, pots []int, rules map[int]int) int {
+	var lastPattern []int
+	var samePatternCount int
+	var lastSum int
+	var sumDiff int
+	var i int
+	for ; i < rounds; i++ {
+		pots = applyRules(rules, hashedPots(pots))
+		pattern := extractPattern(pots)
+		if lastPattern != nil && comparePattern(lastPattern, pattern) {
+			samePatternCount++
+			sum := sum(i+1, pots)
+			sumDiff = sum - lastSum
+			lastSum = sum
+		} else {
+			samePatternCount = 0
+		}
+		if samePatternCount > PATTERN_FINDER_THRESHOLD {
+			break
+		}
+		lastPattern = pattern
+	}
+
+	if samePatternCount == 0 {
+		return sum(rounds, pots)
+	}
+	return (rounds-i-1)*sumDiff + lastSum
+}
+
 func task1(in chan string) string {
 	pots, rules := parseInput(in)
 	sum := run(20, pots, rules)
+	return strconv.Itoa(sum)
+}
+
+func task2(in chan string) string {
+	pots, rules := parseInput(in)
+	sum := run(50000000000, pots, rules)
 	return strconv.Itoa(sum)
 }
