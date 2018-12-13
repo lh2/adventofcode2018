@@ -12,7 +12,7 @@ const (
 	DirUp
 	DirRight
 	DirDown
-	
+
 	DirMax
 )
 
@@ -169,7 +169,7 @@ func (rw *Railway) Tick() []Crash {
 		cart.X = x
 		cart.Y = y
 	}
-	
+
 	ncarts := make([]*Cart, 0, len(rw.Carts))
 	for _, cart := range rw.Carts {
 		if cart.X >= 0 && cart.Y >= 0 {
