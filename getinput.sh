@@ -15,7 +15,7 @@ fi
 
 whydoihavetodothis() {
 	case "$day" in
-	11)
+	11 | 14)
 		sed 's/.*puzzle-input"\>\s*(\d+)\s*/\1/'
 		;;
 	*)
