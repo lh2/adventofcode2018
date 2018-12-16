@@ -8,8 +8,8 @@ import (
 type Register [4]int
 
 type Operation struct {
-	OpCode int
-	Args   [3]int
+	Code int
+	Args [3]int
 }
 
 type Recording struct {
@@ -31,7 +31,7 @@ func parseRegister(rs string) Register {
 func parseOperation(os string) Operation {
 	parts := strings.Split(os, " ")
 	return Operation{
-		OpCode: mustAtoi(parts[0]),
+		Code: mustAtoi(parts[0]),
 		Args: [3]int{
 			mustAtoi(parts[1]),
 			mustAtoi(parts[2]),
@@ -82,4 +82,72 @@ func task1(in chan string) string {
 		}
 	}
 	return strconv.Itoa(rc)
+}
+
+func filterOp(ops map[string]OpFunc, relem string) map[string]OpFunc {
+	nops := make(map[string]OpFunc)
+	for k, op := range ops {
+		if k != relem {
+			nops[k] = op
+		}
+	}
+	return nops
+}
+
+func task2(in chan string) string {
+	rs := parseRecordings(in)
+	opcMap := make(map[int]map[string]OpFunc)
+	for _, r := range rs {
+		opc := r.Operation.Code
+		if _, ok := opcMap[opc]; !ok {
+			opcMap[opc] = AllOps
+		}
+		for opName, op := range AllOps {
+			a := r.Operation.Args
+			res := op(r.Before, a[0], a[1], a[2])
+			if res != r.After {
+				opcMap[opc] = filterOp(opcMap[opc], opName)
+			}
+		}
+
+	}
+	for {
+		uniq := make([]string, 0)
+		for _, opm := range opcMap {
+			if len(opm) > 1 {
+				continue
+			}
+			for k, _ := range opm {
+				uniq = append(uniq, k)
+			}
+		}
+		if len(uniq) == len(AllOps) {
+			break
+		}
+		for opc, opm := range opcMap {
+			if len(opm) == 1 {
+				continue
+			}
+			for _, uop := range uniq {
+				opcMap[opc] = filterOp(opcMap[opc], uop)
+			}
+		}
+	}
+
+	r := Register{0, 0, 0, 0}
+	for line := range in {
+		if line == "" {
+			continue
+		}
+		op := parseOperation(line)
+		opm := opcMap[op.Code]
+		if len(opm) != 1 {
+			panic("should not happen")
+		}
+		for _, fn := range opm {
+			a := op.Args
+			r = fn(r, a[0], a[1], a[2])
+		}
+	}
+	return strconv.Itoa(r[0])
 }

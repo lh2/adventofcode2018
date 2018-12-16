@@ -1,22 +1,22 @@
 package main
 
-var AllOps = []OpFunc{
-	addr,
-	addi,
-	mulr,
-	muli,
-	banr,
-	bani,
-	borr,
-	bori,
-	setr,
-	seti,
-	gtir,
-	gtri,
-	gtrr,
-	eqri,
-	eqir,
-	eqrr,
+var AllOps = map[string]OpFunc{
+	"addr": addr,
+	"addi": addi,
+	"mulr": mulr,
+	"muli": muli,
+	"banr": banr,
+	"bani": bani,
+	"borr": borr,
+	"bori": bori,
+	"setr": setr,
+	"seti": seti,
+	"gtir": gtir,
+	"gtri": gtri,
+	"gtrr": gtrr,
+	"eqri": eqri,
+	"eqir": eqir,
+	"eqrr": eqrr,
 }
 
 type OpFunc func(r Register, a, b, c int) Register
