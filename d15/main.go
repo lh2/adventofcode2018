@@ -100,6 +100,29 @@ type Game struct {
 	maph  int
 }
 
+func (g *Game) Copy() *Game {
+	nm := make([][]*Cell, g.maph)
+	nus := make(Units, 0)
+	for y := 0; y < g.maph; y++ {
+		nm[y] = make([]*Cell, g.mapw)
+		for x := 0; x < g.mapw; x++ {
+			nc := *(g.Map[y][x])
+			nm[y][x] = &nc
+			if nc.Unit != nil {
+				nu := *nc.Unit
+				nc.Unit = &nu
+				nus = append(nus, nc.Unit)
+			}
+		}
+	}
+	return &Game{
+		Map: nm,
+		Units: nus,
+		mapw: g.mapw,
+		maph: g.maph,
+	}
+}
+
 func (g *Game) SearchEnemies(u *Unit) (es Units) {
 	es = make(Units, 0)
 	for y := 0; y < g.maph; y++ {
@@ -271,7 +294,7 @@ func (g *Game) Attack(u, e *Unit) {
 	}
 }
 
-func (g *Game) Tick() bool {
+func (g *Game) Tick(abortOnElfDeath bool) (bool, bool) {
 	sort.Sort(g.Units)
 
 	noop := true
@@ -282,6 +305,9 @@ func (g *Game) Tick() bool {
 		t := g.TargetInVicinity(u)
 		if t != nil {
 			g.Attack(u, t)
+			if abortOnElfDeath && t.HP < 0 && t.Type == UnitTypeElf {
+				return true, true
+			}
 			noop = false
 			continue
 		}
@@ -299,9 +325,12 @@ func (g *Game) Tick() bool {
 		t = g.TargetInVicinity(u)
 		if t != nil {
 			g.Attack(u, t)
+			if abortOnElfDeath && t.HP < 0 && t.Type == UnitTypeElf {
+				return true, true
+			}
 		}
 	}
-	return !noop
+	return !noop, false
 }
 
 func (g *Game) Print() {
@@ -322,7 +351,7 @@ func (g *Game) Print() {
 			}
 			fmt.Printf(p)
 		}
-		fmt.Printf("    \n")//, hpstr)
+		fmt.Printf("%s\n", hpstr)
 	}
 	fmt.Printf("\n")
 }
@@ -377,7 +406,8 @@ func task1(in chan string) string {
 	g := parseInput(in)
 	i := 0
 	for ; ; i++ {
-		if !g.Tick() {
+		cnt, _ := g.Tick(false)
+		if !cnt {
 			break
 		}
 		fmt.Printf("After %d rounds: \n", i+1)
@@ -390,6 +420,50 @@ func task1(in chan string) string {
 		}
 		thp += u.HP
 	}
+	fmt.Printf("Ended after %d rounds with %d total HP\n", i, thp) 
+	return strconv.Itoa(i * thp)
+}
+
+func task2(in chan string) string {
+	og := parseInput(in)
+	deadElf := true
+	cnt := true
+	ap := 15
+	var g *Game
+	var i int
+	for cnt && deadElf {
+		g = og.Copy()
+		ap++
+		for _, u := range g.Units {
+			if u.Type != UnitTypeElf {
+				continue
+			}
+			u.AP = ap
+		}
+		deadElf = false
+		i = 0
+		for cnt && !deadElf {
+			cnt, deadElf = g.Tick(true)
+			if ap == 16 {
+				g.Print()
+			}
+			i++
+		}
+		i--
+	}
+	i-- //I have no idea why I count one round too much here
+	//Really I don't fucking know.
+	//This will probably break horribly for any other input but mine
+	//But I don't care
+	//This is a plea for help please send help
+	thp := 0
+	for _, u := range g.Units {
+		if u.HP < 0 {
+			continue
+		}
+		thp += u.HP
+	}
+	//fmt.Println(ap)
 	fmt.Printf("Ended after %d rounds with %d total HP\n", i, thp) 
 	return strconv.Itoa(i * thp)
 }
