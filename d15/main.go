@@ -428,7 +428,7 @@ func task2(in chan string) string {
 	og := parseInput(in)
 	deadElf := true
 	cnt := true
-	ap := 15
+	ap := 4
 	var g *Game
 	var i int
 	for cnt && deadElf {
