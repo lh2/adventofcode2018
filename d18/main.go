@@ -5,6 +5,9 @@ import (
 	"strconv"
 )
 
+const SEARCH_PATTERN_TRESHOLD = 1000
+const PATTERN_SAMPLE_SIZE = 200
+
 type Cell int
 
 const (
@@ -145,4 +148,29 @@ func task1(in chan string) string {
 	}
 	_, nt, nl := g.Counts()
 	return strconv.Itoa(nt * nl)
+}
+
+func task2(in chan string) string {
+	g := parseInput(in)
+	samples := make([]int, 0)
+	i := 0
+	for ; i < SEARCH_PATTERN_TRESHOLD + PATTERN_SAMPLE_SIZE + 1; i++ {
+		g.Tick()
+		if i >= SEARCH_PATTERN_TRESHOLD {
+			_, nt, nl := g.Counts()
+			rv := nt * nl
+			samples = append(samples, rv)
+		}
+	}
+	seed := samples[0]
+	var pl int
+	for i, sv := range samples[1:] {
+		if (sv == seed) {
+			pl = i + 1
+			break
+		}
+	}
+
+	offset := (1000000000 - SEARCH_PATTERN_TRESHOLD) % pl
+	return strconv.Itoa(samples[pl+offset-1])
 }
