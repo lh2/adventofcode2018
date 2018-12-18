@@ -154,7 +154,7 @@ func task2(in chan string) string {
 	g := parseInput(in)
 	samples := make([]int, 0)
 	i := 0
-	for ; i < SEARCH_PATTERN_TRESHOLD + PATTERN_SAMPLE_SIZE + 1; i++ {
+	for ; i < SEARCH_PATTERN_TRESHOLD+PATTERN_SAMPLE_SIZE+1; i++ {
 		g.Tick()
 		if i >= SEARCH_PATTERN_TRESHOLD {
 			_, nt, nl := g.Counts()
@@ -165,7 +165,7 @@ func task2(in chan string) string {
 	seed := samples[0]
 	var pl int
 	for i, sv := range samples[1:] {
-		if (sv == seed) {
+		if sv == seed {
 			pl = i + 1
 			break
 		}
