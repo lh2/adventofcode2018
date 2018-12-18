@@ -171,6 +171,6 @@ func task2(in chan string) string {
 		}
 	}
 
-	offset := (1000000000 - SEARCH_PATTERN_TRESHOLD) % pl
-	return strconv.Itoa(samples[pl+offset-1])
+	offset := (1000000000 - SEARCH_PATTERN_TRESHOLD - 1) % pl
+	return strconv.Itoa(samples[offset])
 }
