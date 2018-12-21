@@ -34,11 +34,11 @@ func (s Stack) Peek() *Room {
 	return s[len(s)-1]
 }
 
-func task1(in chan string) string {
+func buildMap(rs []rune) map[Point]*Room {
 	m := make(map[Point]*Room)
 	current := &Room{}
 	stack := Stack{current}
-	for _, r := range []rune(<-in) {
+	for _, r := range rs {
 		switch r {
 		case '^':
 		case '$':
@@ -73,6 +73,11 @@ func task1(in chan string) string {
 			current = room
 		}
 	}
+	return m
+}
+
+func task1(in chan string) string {
+	m := buildMap([]rune(<-in))
 	maxd := 0
 	for _, r := range m {
 		if r.Distance > maxd {
@@ -80,4 +85,15 @@ func task1(in chan string) string {
 		}
 	}
 	return strconv.Itoa(maxd)
+}
+
+func task2(in chan string) string {
+	m := buildMap([]rune(<-in))
+	over1k := 0
+	for _, r := range m {
+		if r.Distance >= 1000 {
+			over1k++
+		}
+	}
+	return strconv.Itoa(over1k)
 }
