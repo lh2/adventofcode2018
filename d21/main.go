@@ -47,3 +47,26 @@ func task1(in chan string) string {
 	}
 	return strconv.Itoa(r[2])
 }
+
+func task2(in chan string) string {
+	is, ip := parseInstructions(in)
+	r := Register{}
+	var idx int
+	resMap := make(map[int]bool)
+	var res int
+	for {
+		idx = r[ip]
+		if idx == 28 {
+			v := r[2]
+			if _, ok := resMap[v]; ok {
+				break
+			}
+			resMap[v] = true
+			res = v
+		}
+		a := is[idx].Args
+		r = AllOps[is[idx].Name](r, a[0], a[1], a[2])
+		r[ip]++
+	}
+	return strconv.Itoa(res)
+}
